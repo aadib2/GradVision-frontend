@@ -104,7 +104,7 @@ export function AppSidebar() {
         </nav>
 
         <div
-          className="mt-auto flex h-[50px] w-full items-center gap-3 rounded-[12px] px-4 font-serif text-[20px] font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]"
+          className="mt-auto flex h-[50px] w-full items-center gap-3 rounded-[12px] border border-[color-mix(in_srgb,var(--blue)_10%,transparent)] px-4 font-serif text-[20px] font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]"
         >
           <Settings className="size-6 shrink-0" strokeWidth={2} aria-hidden />
           Settings
