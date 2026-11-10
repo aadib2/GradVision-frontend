@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -81,9 +82,13 @@ export function AppSidebar() {
         aria-label="Application"
       >
         <div className="mb-8 flex items-center gap-2 px-2">
-          <GraduationCap
-            className="size-6 shrink-0"
-            strokeWidth={2}
+          <Image
+            src="/gradvision-logo.svg"
+            alt=""
+            width={36}
+            height={32}
+            unoptimized
+            className="h-8 w-auto shrink-0"
             aria-hidden
           />
           <span className="font-serif text-[25px] leading-none font-bold text-[var(--blue)]">
