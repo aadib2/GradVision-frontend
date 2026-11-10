@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "GradVision",
   description: "add description here ...",
+  icons: {
+    icon: "/gradvision-logo.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
