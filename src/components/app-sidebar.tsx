@@ -45,28 +45,78 @@ function SidebarNavLink({
   );
 }
 
+function MobileNavLink({
+  href,
+  label,
+  icon: Icon,
+  isActive,
+}: {
+  href: string;
+  label: string;
+  icon: typeof GraduationCap;
+  isActive: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={isActive ? "page" : undefined}
+      className={cn(
+        "mx-1 flex flex-1 flex-col items-center justify-center gap-1 rounded-[12px] py-2 font-serif text-sm leading-none font-bold text-[var(--blue)] transition-colors",
+        isActive ? "bg-[var(--white)]" : "bg-transparent hover:bg-[var(--white)]",
+      )}
+    >
+      <Icon className="size-5 shrink-0" strokeWidth={2} aria-hidden />
+      {label}
+    </Link>
+  );
+}
+
 export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside
-      className="flex w-56 shrink-0 flex-col border-r border-[var(--blue)] bg-[var(--cream)] px-4 py-6"
-      aria-label="Application"
-    >
-      <div className="mb-8 flex items-center gap-2 px-2">
-        <GraduationCap
-          className="size-6 shrink-0"
-          strokeWidth={2}
-          aria-hidden
-        />
-        <span className="font-serif text-[25px] leading-none font-bold text-[var(--blue)]">
-          GradVision
-        </span>
-      </div>
+    <>
+      <aside
+        className="hidden w-56 shrink-0 flex-col border-r border-[var(--blue)] bg-[var(--cream)] px-4 py-6 md:flex"
+        aria-label="Application"
+      >
+        <div className="mb-8 flex items-center gap-2 px-2">
+          <GraduationCap
+            className="size-6 shrink-0"
+            strokeWidth={2}
+            aria-hidden
+          />
+          <span className="font-serif text-[25px] leading-none font-bold text-[var(--blue)]">
+            GradVision
+          </span>
+        </div>
 
-      <nav className="flex flex-col gap-3 pt-[30px]">
+        <nav className="flex flex-col gap-3 pt-[30px]">
+          {mainNavItems.map((item) => (
+            <SidebarNavLink
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              isActive={pathname === item.href}
+            />
+          ))}
+        </nav>
+
+        <div
+          className="mt-auto flex h-[50px] w-full items-center gap-3 rounded-[12px] px-4 font-serif text-[20px] font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]"
+        >
+          <Settings className="size-6 shrink-0" strokeWidth={2} aria-hidden />
+          Settings
+        </div>
+      </aside>
+
+      <nav
+        className="fixed inset-x-0 bottom-0 z-50 flex border-t border-[var(--blue)] bg-[var(--cream)] pb-[env(safe-area-inset-bottom)] md:hidden"
+        aria-label="Application"
+      >
         {mainNavItems.map((item) => (
-          <SidebarNavLink
+          <MobileNavLink
             key={item.href}
             href={item.href}
             label={item.label}
@@ -74,14 +124,11 @@ export function AppSidebar() {
             isActive={pathname === item.href}
           />
         ))}
+        <div className="mx-1 flex flex-1 flex-col items-center justify-center gap-1 rounded-[12px] py-2 font-serif text-sm leading-none font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]">
+          <Settings className="size-5 shrink-0" strokeWidth={2} aria-hidden />
+          Settings
+        </div>
       </nav>
-
-      <div
-        className="mt-auto flex h-[50px] w-full items-center gap-3 rounded-[12px] px-4 font-serif text-[20px] font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]"
-      >
-        <Settings className="size-6 shrink-0" strokeWidth={2} aria-hidden />
-        Settings
-      </div>
-    </aside>
+    </>
   );
 }
