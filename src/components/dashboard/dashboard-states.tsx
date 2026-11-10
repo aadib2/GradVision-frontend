@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { AlertCircle, LogIn, RotateCw } from "lucide-react";
+import { LogIn } from "lucide-react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { ErrorState } from "@/components/states/error-state";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -48,19 +49,11 @@ export function DashboardError({
   onRetry: () => void;
 }) {
   return (
-    <Card role="alert" className="border-(--burgundy)/40">
-      <CardContent className="flex flex-col items-start gap-3">
-        <div className="flex items-center gap-2 font-bold text-(--burgundy)">
-          <AlertCircle className="size-5" aria-hidden />
-          Couldn&apos;t load your dashboard
-        </div>
-        <p className="text-sm">{message}</p>
-        <Button variant="outline" onClick={onRetry}>
-          <RotateCw aria-hidden />
-          Try again
-        </Button>
-      </CardContent>
-    </Card>
+    <ErrorState
+      title="Couldn't load your dashboard"
+      message={message}
+      onRetry={onRetry}
+    />
   );
 }
 
@@ -81,23 +74,4 @@ export function DashboardLoggedOut() {
   );
 }
 
-export function EmptyState({
-  text,
-  href,
-  linkLabel,
-}: {
-  text: string;
-  href?: string;
-  linkLabel?: string;
-}) {
-  return (
-    <div className="flex flex-col items-start gap-2 rounded-lg border border-dashed border-(--blue)/30 p-4 text-sm">
-      <p>{text}</p>
-      {href && linkLabel && (
-        <Link href={href} className="font-bold underline underline-offset-4">
-          {linkLabel}
-        </Link>
-      )}
-    </div>
-  );
-}
+export { EmptyState } from "@/components/states/empty-state";
