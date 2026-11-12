@@ -17,7 +17,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   if (!baseUrl?.trim()) {
@@ -29,7 +29,7 @@ function getApiBaseUrl(): string {
   return baseUrl.replace(/\/$/, "");
 }
 
-function isApiErrorBody(value: unknown): value is ApiErrorBody {
+export function isApiErrorBody(value: unknown): value is ApiErrorBody {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -38,6 +38,65 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
     "error" in value &&
     typeof value.error === "string"
   );
+}
+
+export function getApiErrorMessage(
+  data: unknown,
+  fallback = "Something went wrong. Please try again.",
+): string {
+  if (isApiErrorBody(data) && data.error.trim()) {
+    return data.error;
+  }
+
+  return fallback;
+}
+
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export async function loginUser(payload: LoginPayload): Promise<void> {
+  let response: Response;
+
+  try {
+    response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new ApiRequestError(
+      "Unable to reach the server. Check your connection and try again.",
+    );
+  }
+
+  let data: unknown;
+
+  try {
+    data = await response.json();
+  } catch {
+    if (response.ok) {
+      return;
+    }
+
+    throw new ApiRequestError("Something went wrong. Please try again.");
+  }
+
+  if (
+    response.ok &&
+    typeof data === "object" &&
+    data !== null &&
+    "success" in data &&
+    data.success === true
+  ) {
+    return;
+  }
+
+  throw new ApiRequestError(getApiErrorMessage(data));
 }
 
 export async function registerUser(payload: RegisterUserPayload): Promise<void> {
@@ -68,9 +127,7 @@ export async function registerUser(payload: RegisterUserPayload): Promise<void> 
 
   try {
     const data: unknown = await response.json();
-    if (isApiErrorBody(data) && data.error.trim()) {
-      message = data.error;
-    }
+    message = getApiErrorMessage(data, message);
   } catch {
     // Non-JSON or empty body — keep generic message.
   }
