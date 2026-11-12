@@ -99,6 +99,47 @@ export async function loginUser(payload: LoginPayload): Promise<void> {
   throw new ApiRequestError(getApiErrorMessage(data));
 }
 
+export async function logoutUser(): Promise<void> {
+  let response: Response;
+
+  try {
+    response = await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch {
+    throw new ApiRequestError(
+      "Unable to sign out. Check your connection and try again.",
+    );
+  }
+
+  let data: unknown;
+
+  try {
+    data = await response.json();
+  } catch {
+    if (response.ok) {
+      return;
+    }
+
+    throw new ApiRequestError("Unable to sign out. Please try again.");
+  }
+
+  if (
+    response.ok &&
+    typeof data === "object" &&
+    data !== null &&
+    "success" in data &&
+    data.success === true
+  ) {
+    return;
+  }
+
+  throw new ApiRequestError(getApiErrorMessage(data, "Unable to sign out. Please try again."));
+}
+
 export async function registerUser(payload: RegisterUserPayload): Promise<void> {
   const url = `${getApiBaseUrl()}/users`;
 

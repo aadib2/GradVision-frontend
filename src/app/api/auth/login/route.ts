@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {
-  ACCESS_TOKEN_COOKIE,
-  ACCESS_TOKEN_MAX_AGE_SECONDS,
-  REFRESH_TOKEN_COOKIE,
-  REFRESH_TOKEN_MAX_AGE_SECONDS,
-} from "@/lib/auth-cookies";
+import { setAuthCookies } from "@/lib/auth-cookies";
 import { getApiBaseUrl, getApiErrorMessage } from "@/lib/api";
 
 type LoginRequestBody = {
@@ -113,24 +108,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const isProduction = process.env.NODE_ENV === "production";
   const response = NextResponse.json({ success: true });
-
-  response.cookies.set(ACCESS_TOKEN_COOKIE, accessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: "lax",
-    path: "/",
-    maxAge: ACCESS_TOKEN_MAX_AGE_SECONDS,
-  });
-
-  response.cookies.set(REFRESH_TOKEN_COOKIE, refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: "lax",
-    path: "/",
-    maxAge: REFRESH_TOKEN_MAX_AGE_SECONDS,
-  });
-
+  setAuthCookies(response, accessToken, refreshToken);
   return response;
 }
