@@ -3,13 +3,26 @@ import { ArrowRight } from "lucide-react";
 
 import { AuthField } from "@/components/auth/auth-field";
 import { AuthForm } from "@/components/auth/auth-form";
+import { AuthFormAlert } from "@/components/auth/auth-form-alert";
 import { AuthPageShell } from "@/components/auth/auth-page-shell";
 import { AuthSubmitButton } from "@/components/auth/auth-submit-button";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ registered?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { registered } = await searchParams;
+  const showRegisteredMessage = registered === "1";
+
   return (
     <AuthPageShell tagline="Start planning your future today">
       <AuthForm>
+        {showRegisteredMessage ? (
+          <AuthFormAlert variant="success">
+            Account created. Please sign in.
+          </AuthFormAlert>
+        ) : null}
         <AuthField
           id="login-email"
           label="Email"

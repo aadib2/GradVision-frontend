@@ -7,11 +7,13 @@ import { cn } from "@/lib/utils";
 type AuthFormProps = {
   children: ReactNode;
   className?: string;
+  onSubmit?: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
 };
 
-export function AuthForm({ children, className }: AuthFormProps) {
+export function AuthForm({ children, className, onSubmit }: AuthFormProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    void onSubmit?.(event);
   }
 
   return (
