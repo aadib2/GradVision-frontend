@@ -1,11 +1,17 @@
-import { PageNav } from "@/components/page-nav";
+import { AuthPageShell } from "@/components/auth/auth-page-shell";
+import { LoginForm } from "@/components/auth/login-form";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ registered?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { registered } = await searchParams;
+  const showRegisteredMessage = registered === "1";
+
   return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-4xl">Login</h1>
-      <p className="mt-2">Start planning your future today</p>
-      <PageNav current="/login" />
-    </main>
+    <AuthPageShell tagline="Start planning your future today">
+      <LoginForm showRegisteredMessage={showRegisteredMessage} />
+    </AuthPageShell>
   );
 }

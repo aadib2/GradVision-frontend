@@ -7,9 +7,9 @@ import {
   GraduationCap,
   NotebookText,
   Search,
-  Settings,
 } from "lucide-react";
 
+import { SettingsMenu } from "@/components/settings-menu";
 import { cn } from "@/lib/utils";
 
 const mainNavItems = [
@@ -108,12 +108,7 @@ export function AppSidebar() {
           ))}
         </nav>
 
-        <div
-          className="mt-auto flex h-[50px] w-full items-center gap-3 rounded-[12px] border border-[color-mix(in_srgb,var(--blue)_10%,transparent)] px-4 font-serif text-[20px] font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]"
-        >
-          <Settings className="size-6 shrink-0" strokeWidth={2} aria-hidden />
-          Settings
-        </div>
+        <SettingsMenu variant="sidebar" />
       </aside>
 
       <nav
@@ -129,10 +124,7 @@ export function AppSidebar() {
             isActive={pathname === item.href}
           />
         ))}
-        <div className="mx-1 flex flex-1 flex-col items-center justify-center gap-1 rounded-[12px] py-2 font-serif text-sm leading-none font-bold text-[var(--blue)] transition-colors hover:bg-[var(--white)]">
-          <Settings className="size-5 shrink-0" strokeWidth={2} aria-hidden />
-          Settings
-        </div>
+        <SettingsMenu variant="mobile" />
       </nav>
     </>
   );
