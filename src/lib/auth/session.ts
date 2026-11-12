@@ -1,7 +1,10 @@
 import { cookies } from "next/headers";
 
 import { getApiBaseUrl } from "@/lib/api";
-import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
+import {
+  ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+} from "@/lib/auth-cookies";
 
 /** User profile returned after the backend validates the access token. */
 export type SessionUser = {
@@ -14,6 +17,7 @@ export type SessionUser = {
 export type ValidatedSession =
   | { ok: true; user: SessionUser }
   | { ok: false; reason: "unauthorized" }
+  | { ok: false; reason: "refreshable" }
   | {
       ok: false;
       reason: "unavailable";
@@ -55,6 +59,19 @@ export function extractUserIdFromAccessToken(token: string): number | null {
   }
 }
 
+async function hasRefreshTokenCookie(): Promise<boolean> {
+  const cookieStore = await cookies();
+  return Boolean(cookieStore.get(REFRESH_TOKEN_COOKIE)?.value?.trim());
+}
+
+async function unauthorizedSession(): Promise<ValidatedSession> {
+  if (await hasRefreshTokenCookie()) {
+    return { ok: false, reason: "refreshable" };
+  }
+
+  return { ok: false, reason: "unauthorized" };
+}
+
 function isSessionUser(value: unknown): value is SessionUser {
   return (
     typeof value === "object" &&
@@ -79,12 +96,12 @@ export async function getValidatedSession(): Promise<ValidatedSession> {
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
 
   if (!accessToken?.trim()) {
-    return { ok: false, reason: "unauthorized" };
+    return unauthorizedSession();
   }
 
   const userId = extractUserIdFromAccessToken(accessToken);
   if (userId === null) {
-    return { ok: false, reason: "unauthorized" };
+    return unauthorizedSession();
   }
 
   let apiBaseUrl: string;
@@ -119,7 +136,7 @@ export async function getValidatedSession(): Promise<ValidatedSession> {
   }
 
   if (response.status === 401 || response.status === 403) {
-    return { ok: false, reason: "unauthorized" };
+    return unauthorizedSession();
   }
 
   if (response.status >= 500) {
@@ -131,17 +148,17 @@ export async function getValidatedSession(): Promise<ValidatedSession> {
   }
 
   if (!response.ok) {
-    return { ok: false, reason: "unauthorized" };
+    return unauthorizedSession();
   }
 
   try {
     const data: unknown = await response.json();
     if (!isSessionUser(data)) {
-      return { ok: false, reason: "unauthorized" };
+      return unauthorizedSession();
     }
 
     if (data.user_id !== userId) {
-      return { ok: false, reason: "unauthorized" };
+      return unauthorizedSession();
     }
 
     return { ok: true, user: data };

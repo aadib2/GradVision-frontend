@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { ApplicationServiceError } from "@/components/application-service-error";
+import { RestoringSession } from "@/components/restoring-session";
 import { getValidatedSession } from "@/lib/auth/session";
 
 /**
@@ -13,6 +14,14 @@ export async function renderProtectedApplicationPage(
   render: () => ReactNode,
 ): Promise<ReactNode> {
   const session = await getValidatedSession();
+
+  if (!session.ok && session.reason === "refreshable") {
+    return (
+      <main className="flex-1">
+        <RestoringSession />
+      </main>
+    );
+  }
 
   if (!session.ok && session.reason === "unauthorized") {
     redirect("/login");
