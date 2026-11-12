@@ -10,12 +10,6 @@ const publicRoutes = [
   { href: "/onboarding", label: "Onboarding" },
 ] as const;
 
-const applicationRoutes = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/explore", label: "Explore" },
-  { href: "/my-vision", label: "My Vision" },
-] as const;
-
 type PageNavProps = {
   current: string;
 };
@@ -51,22 +45,6 @@ export function PageNav({ current }: PageNavProps) {
         </p>
         <div className="flex flex-wrap gap-2">
           {publicRoutes.map((route) => (
-            <NavLink
-              key={route.href}
-              href={route.href}
-              label={route.label}
-              current={current}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="border-t border-border pt-4">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Application
-        </p>
-        <div className="flex flex-col items-start gap-2">
-          {applicationRoutes.map((route) => (
             <NavLink
               key={route.href}
               href={route.href}
