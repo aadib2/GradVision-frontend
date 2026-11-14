@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GradVision",
-  description: "add description here ...",
+  title: {
+    default: "GradVision | Graduate Program Discovery",
+    template: "%s | GradVision",
+  },
+  description:
+    "GradVision helps students discover, compare, and save graduate programs, all in one place.",
   icons: {
     icon: "/gradvision-logo.svg",
   },
