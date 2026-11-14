@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
+
 import { PageNav } from "@/components/page-nav";
+
+export const metadata: Metadata = {
+  title: "Onboarding",
+  description:
+    "Set up your GradVision profile to get personalized graduate program recommendations.",
+};
 
 export default function OnboardingPage() {
   return (
