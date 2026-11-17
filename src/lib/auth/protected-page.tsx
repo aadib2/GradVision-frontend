@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { ApplicationServiceError } from "@/components/application-service-error";
 import { RestoringSession } from "@/components/restoring-session";
-import { getValidatedSession } from "@/lib/auth/session";
+import { getValidatedSession, type SessionUser } from "@/lib/auth/session";
 
 /**
  * Runs a server-side session check for application pages.
@@ -11,7 +11,7 @@ import { getValidatedSession } from "@/lib/auth/session";
  */
 export async function renderProtectedApplicationPage(
   retryHref: string,
-  render: () => ReactNode,
+  render: (user: SessionUser) => ReactNode | Promise<ReactNode>,
 ): Promise<ReactNode> {
   const session = await getValidatedSession();
 
@@ -35,5 +35,9 @@ export async function renderProtectedApplicationPage(
     );
   }
 
-  return render();
+  if (!session.ok) {
+    redirect("/login");
+  }
+
+  return render(session.user);
 }
